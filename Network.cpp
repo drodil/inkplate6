@@ -4,31 +4,59 @@ void Network::init(char* ssid, char* password) {
   WiFi.mode(WIFI_STA);
   WiFi.begin(ssid, password);
 
+  http.getStream().setNoDelay(true);
+  http.getStream().setTimeout(5);
+
   this->connect();
 }
 
-DynamicJsonDocument Network::getJSON(char* url) {
+bool Network::getJSON(char* url, DynamicJsonDocument* doc) {
   this->connect();
+  
+  bool error = false;
   bool sleep = WiFi.getSleep();
   WiFi.setSleep(false);
-  DynamicJsonDocument doc(2000);
-  HTTPClient http;
 
-  http.getStream().setNoDelay(true);
-  http.getStream().setTimeout(1);
-
-  http.begin(url);
   int httpCode = http.GET();
-  if (httpCode == 200)
-  {
-     int32_t len = http.getSize();
-     if (len > 0)
-     {
-        deserializeJson(doc, http.getStream());
-     }
+  if (httpCode == 200) {
+    int32_t len = http.getSize();
+    if (len > 0) {
+      DeserializationError jsonError = deserializeJson(*doc, http.getStream());
+      if (jsonError) {
+        Serial.print("JSON deserialize failed: ");
+        Serial.println(jsonError.c_str());
+        error = true;
+      }
+    } else {
+      Serial.println("Length zero response");
+      error = true;   
+    }
+  } else {
+    Serial.println(httpCode);
+    error = true;
   }
   WiFi.setSleep(sleep);
-  return doc;
+  return error;
+}
+
+bool Network::getData(char* url, char* data) {
+  this->connect();
+  
+  bool error = false;
+  bool sleep = WiFi.getSleep();
+  WiFi.setSleep(false);
+
+  int httpCode = http.begin(url);
+  if (httpCode == 200) {
+      long n = 0;
+      while (http.getStream().available())
+          data[n++] = http.getStream().read();
+      data[n++] = 0;
+  } else {
+      Serial.println(httpCode);
+      error = true;
+  }
+  return error;
 }
 
 void Network::connect() {

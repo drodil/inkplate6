@@ -11,11 +11,13 @@ class Network {
   public:
     void init(char* ssid, char* password);
     void getTime(char *timeStr, int timeZone);
-    DynamicJsonDocument getJSON(char* url); 
+    bool getJSON(char* url, DynamicJsonDocument* doc);
+    bool getData(char* url, char* data);
 
   private:
     void connect();
     void setTime();
+    HTTPClient http;
 };
 
 #endif // NETWORK_H
