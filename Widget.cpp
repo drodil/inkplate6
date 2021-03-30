@@ -33,6 +33,14 @@ int Widget::getLowerY() {
   return location & 0x0001 ? 299 : 599;
 }
 
+int Widget::getMidX() {
+  return getUpperX() + (getWidth() / 2);
+}
+
+int Widget::getMidY() {
+  return getUpperY() + (getHeight() / 2);
+}
+
 int Widget::getWidth() {
   return getLowerX() - getUpperX() + 1;
 }

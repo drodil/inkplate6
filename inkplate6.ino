@@ -5,10 +5,6 @@
 
 #include "DTWWidget.h"
 
-#include "Fonts/Roboto_Light_120.h"
-#include "Fonts/Roboto_Light_36.h"
-#include "Fonts/Roboto_Light_48.h"
-
 #define DELAY_MS 60000 * 3
 
 // display object
@@ -33,6 +29,8 @@ void setup() {
   network.init(WIFI_SSID, WIFI_PASSWORD);
 
   DTWWidget dtw(&display, &network);
+  dtw.setColorScheme(WIDGET_COLORSCHEME_LIGHT);
+  dtw.setLocation(WIDGET_LOCATION_HALF_LEFT);
   dtw.draw(partialUpdate);
 
   display.display();

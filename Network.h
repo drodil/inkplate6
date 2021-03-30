@@ -10,7 +10,9 @@
 class Network {
   public:
     void init(char* ssid, char* password);
-    void getTime(char *timeStr, int timeZone);
+    void getTime(char *timeStr, long offSet);
+    void getDate(char *dateStr, long offSet);
+    void getDayName(char *dayNameStr, long offSet);
     bool getJSON(char* url, DynamicJsonDocument* doc);
     bool getData(char* url, char* data);
 

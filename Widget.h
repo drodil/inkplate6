@@ -38,6 +38,8 @@ class Widget {
     int getUpperY();
     int getLowerX();
     int getLowerY();
+    int getMidX();
+    int getMidY();
     int getWidth();
     int getHeight();
 

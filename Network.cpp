@@ -1,5 +1,7 @@
 #include "Network.h"
 
+#include "Const.h"
+
 void Network::init(char* ssid, char* password) {
   WiFi.mode(WIFI_STA);
   WiFi.begin(ssid, password);
@@ -105,19 +107,53 @@ void Network::setTime() {
     Serial.print(asctime(&timeinfo));
 }
 
-void Network::getTime(char *timeStr, int timeZone)
+void Network::getTime(char *timeStr, long offSet)
 {
-    time_t nowSecs = time(nullptr);
+    time_t nowSecs = time(nullptr) + (long)TIMEZONE * 3600L + offSet;
 
     struct tm timeinfo;
     gmtime_r(&nowSecs, &timeinfo);
 
-    strncpy(timeStr, asctime(&timeinfo) + 11, 5);
+    strftime(timeStr, 20, TIME_FORMAT, &timeinfo);
+}
 
-    int hr = 10 * timeStr[0] + timeStr[1] + timeZone;
+void Network::getDate(char *dateStr, long offSet) {
+    time_t nowSecs = time(nullptr) + (long)TIMEZONE * 3600L + offSet;
 
-    hr = (hr % 24 + 24) % 24;
+    struct tm timeinfo;
+    gmtime_r(&nowSecs, &timeinfo);
 
-    timeStr[0] = hr / 10 + '0';
-    timeStr[1] = hr % 10 + '0';
+    strftime(dateStr, 20, DATE_FORMAT, &timeinfo);
+}
+
+void Network::getDayName(char *dayNameStr, long offSet) {
+    time_t nowSecs = time(nullptr) + (long)TIMEZONE * 3600L + offSet;
+
+    struct tm timeinfo;
+    gmtime_r(&nowSecs, &timeinfo);
+
+    switch(timeinfo.tm_wday) {
+      default:
+      case 0:
+        strcpy(dayNameStr, DAY0);
+        break;
+      case 1:
+        strcpy(dayNameStr, DAY1);
+        break;
+      case 2:
+        strcpy(dayNameStr, DAY2);
+        break;
+      case 3:
+        strcpy(dayNameStr, DAY3);
+        break;
+      case 4:
+        strcpy(dayNameStr, DAY4);
+        break;
+      case 5:
+        strcpy(dayNameStr, DAY5);
+        break;
+      case 6:
+        strcpy(dayNameStr, DAY6);
+        break;
+    }
 }
