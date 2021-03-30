@@ -1,7 +1,5 @@
 #include "Network.h"
 
-#include "Const.h"
-
 void Network::init(char* ssid, char* password) {
   WiFi.mode(WIFI_STA);
   WiFi.begin(ssid, password);

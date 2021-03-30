@@ -1,13 +1,8 @@
-#ifndef WIDGET_H
-#define WIDGET_H
-
 #include "Inkplate.h"
 #include "Network.h"
 
-// X = 0 -> 1000
-// Y = 0 -> 0100
-// X = 50% -> 0010
-// Y = 50% -> 0001
+#ifndef WIDGET_H
+#define WIDGET_H
 
 // WIDGET LOCATION DEFINITIONS
 // Full screen

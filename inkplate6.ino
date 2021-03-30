@@ -1,8 +1,6 @@
 #include "Inkplate.h"
 
 #include "Network.h"
-#include "Secrets.h"
-
 #include "DTWWidget.h"
 
 #define DELAY_MS 60000 * 3

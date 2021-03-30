@@ -1,11 +1,12 @@
-#ifndef NETWORK_H
-#define NETWORK_H
-
 #include "Arduino.h"
 #include <HTTPClient.h>
 #include <WiFi.h>
 #include <WiFiClientSecure.h>
 #include <ArduinoJson.h>
+#include "Settings.h"
+
+#ifndef NETWORK_H
+#define NETWORK_H
 
 class Network {
   public:
