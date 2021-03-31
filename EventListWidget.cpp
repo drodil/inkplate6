@@ -34,6 +34,7 @@ void EventListWidget::draw(bool partial) {
   display->setTextColor(getTextColor());
   char* prevDay = "";
   int addition = 0;
+  // TODO: Show no events text
   for(int i = 0; i < eventsNum; i++) {
     display->setCursor(getUpperX() + 20, getUpperY() + (i * 20) + addition);
     if(strcmp(prevDay, events[i].date) != 0) {
@@ -94,8 +95,12 @@ void EventListWidget::parseEvents(char* data) {
       
       time_t epoch = mktime(&eventStart) + (time_t)TIMEZONE * 3600L;
       events[eventsNum].timeStamp = epoch;
+
+      char* dateAndDay = "";
+      strftime(dateAndDay, 32, DATE_FORMAT, &eventStart);
+      sprintf(dateAndDay, "%s %s", DAYS[eventStart.tm_wday], dateAndDay);
+      strcpy(events[eventsNum].date, dateAndDay);
       
-      strftime(events[eventsNum].date, 32, DATE_FORMAT, &eventStart);
       strftime(events[eventsNum].startTime, 16, TIME_FORMAT, &eventStart);
       strftime(events[eventsNum].endTime, 16, TIME_FORMAT, &eventEnd);
     }

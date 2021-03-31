@@ -47,12 +47,12 @@ void setup() {
 
   DTWWidget dtw(&display, &network);
   dtw.setColorScheme(WIDGET_COLORSCHEME_LIGHT);
-  dtw.setLocation(WIDGET_LOCATION_HALF_LEFT);
+  dtw.setLocation(WIDGET_LOCATION_HALF_RIGHT);
   dtw.draw(partialUpdate);
 
   EventListWidget elw(&display, &network);
   elw.setColorScheme(WIDGET_COLORSCHEME_DARK);
-  elw.setLocation(WIDGET_LOCATION_HALF_RIGHT);
+  elw.setLocation(WIDGET_LOCATION_HALF_LEFT);
   elw.draw(partialUpdate);
 
   display.display();
