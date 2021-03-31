@@ -17,6 +17,9 @@ void Widget::setLocation(int location) {
 }
 
 void Widget::setColorScheme(int colorScheme) {
+  if(display->getDisplayMode() == INKPLATE_1BIT) {
+    colorScheme = (colorScheme <= 3) ? WIDGET_COLORSCHEME_DARK : WIDGET_COLORSCHEME_LIGHT; 
+  }
   this->colorScheme = colorScheme;
 }
 
@@ -66,6 +69,13 @@ int Widget::getScreenHeight() {
     return SCREEN_HEIGHT;
   }
   return SCREEN_WIDTH;
+}
+
+int Widget::getTextColor() {
+  if(colorScheme > 3) {
+      return BLACK;
+  }
+  return WHITE;
 }
 
 void Widget::drawBackground() {

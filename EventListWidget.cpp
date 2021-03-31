@@ -19,10 +19,6 @@ void EventListWidget::draw(bool partial) {
     return;
   }
 
-  if(colorScheme == WIDGET_COLORSCHEME_LIGHT) {
-    textColor = BLACK;
-  }
-
   this->drawBackground();
   eventsNum = 0;
   for(int i = 0; i < NUM_CALENDAR_URLS; i++) {
@@ -35,7 +31,7 @@ void EventListWidget::draw(bool partial) {
   
   qsort(events, eventsNum, sizeof(EventListWidget::Event), cmpEvents);
 
-  display->setTextColor(textColor);
+  display->setTextColor(getTextColor());
   char* prevDay = "";
   int addition = 0;
   for(int i = 0; i < eventsNum; i++) {

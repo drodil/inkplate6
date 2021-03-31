@@ -35,9 +35,6 @@ DTWWidget::DTWWidget(Inkplate* display, Network* network) : Widget(display, netw
 }
 
 void DTWWidget::draw(bool partial) {
-  if(colorScheme == WIDGET_COLORSCHEME_LIGHT) {
-    textColor = BLACK;
-  }
   this->drawBackground();
   this->drawTime();
   if(!partial) {
@@ -47,7 +44,7 @@ void DTWWidget::draw(bool partial) {
 }
 
 void DTWWidget::drawDate() {
-  display->setTextColor(textColor);
+  display->setTextColor(getTextColor());
   display->setTextSize(1);
   display->setFont(&Roboto_Light_36);
   network->getDayName(currentDay, 0);
@@ -60,7 +57,7 @@ void DTWWidget::drawDate() {
 }
 
 void DTWWidget::drawTime() {
-  display->setTextColor(textColor);
+  display->setTextColor(getTextColor());
   display->setFont(&Roboto_Light_48);
   network->getTime(currentTime, 0);
   display->setCursor(getMidX() - 10, getUpperY() + 60);
@@ -68,7 +65,7 @@ void DTWWidget::drawTime() {
 }
 
 void DTWWidget::drawWeather() {
-  display->setTextColor(textColor);
+  display->setTextColor(getTextColor());
   DynamicJsonDocument doc(2048);
   char url[256];
   sprintf(url, "https://api.openweathermap.org/data/2.5/onecall?lat=%d&lon=%d&exclude=minutely,alerts&units=%s&lang=%s&appid=%s", 
@@ -88,7 +85,7 @@ void DTWWidget::drawWeather() {
 
   for(int i = 0; i < 18; i++) {
     if(strcmp(abbrs[i], doc["current"]["weather"][0]["icon"]) == 0) {
-      display->drawBitmap(getMidX(), getMidY(), icons[i], 152, 152, textColor);
+      display->drawBitmap(getMidX(), getMidY(), icons[i], 152, 152, getTextColor());
       break;
     }
   }

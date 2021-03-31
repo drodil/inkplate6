@@ -26,8 +26,10 @@
 #define WIDGET_LOCATION_LOWER_RIGHT 0x0000
 
 // Widget color schemes
-#define WIDGET_COLORSCHEME_LIGHT 1
-#define WIDGET_COLORSCHEME_DARK 0
+#define WIDGET_COLORSCHEME_LIGHT WHITE
+#define WIDGET_COLORSCHEME_LIGHT_GREY 5
+#define WIDGET_COLORSCHEME_DARK_GREY 2
+#define WIDGET_COLORSCHEME_DARK BLACK
 
 class Widget {
   public:
@@ -46,6 +48,8 @@ class Widget {
     int getHeight();
     int getScreenWidth();
     int getScreenHeight();
+
+    int getTextColor();
 
   protected:
     void drawBackground();

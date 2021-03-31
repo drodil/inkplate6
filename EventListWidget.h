@@ -21,7 +21,6 @@ public:
 private:
   Event events[128];
   int eventsNum;
-  int textColor;
 
   void parseEvents(char* data);
   void icalTimeToTm(char* time, struct tm* ret);
