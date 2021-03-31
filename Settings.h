@@ -5,6 +5,10 @@ extern char* WIFI_SSID;
 extern char* WIFI_PASSWORD;
 extern char* OPENWEATHERMAP_APIKEY;
 
+// Display height and width
+extern const unsigned DISPLAY_HEIGHT;
+extern const unsigned DISPLAY_WIDTH;
+
 // Date and time formats based on strftime
 extern const char* DATE_FORMAT;
 extern const char* TIME_FORMAT;

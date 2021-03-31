@@ -22,7 +22,8 @@ void EventListWidget::draw(bool partial) {
   if(colorScheme == WIDGET_COLORSCHEME_LIGHT) {
     textColor = BLACK;
   }
-  
+
+  this->drawBackground();
   eventsNum = 0;
   for(int i = 0; i < NUM_CALENDAR_URLS; i++) {
     char data[2048];
@@ -52,6 +53,7 @@ void EventListWidget::draw(bool partial) {
     display->print(events[i].endTime);
     display->print("   ");
     display->println(events[i].name);
+    // TODO: Show location if any
     // TODO: Limit event name length or wrap it
 
     if(getUpperY() + (i * 20) + addition >= getLowerY()) {
