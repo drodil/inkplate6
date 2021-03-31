@@ -1,3 +1,7 @@
+#ifndef ARDUINO_ESP32_DEV
+#error "Wrong board selection for this project, please select Inkplate 6 in the boards menu."
+#endif
+
 #include "Inkplate.h"
 
 #include "Network.h"
