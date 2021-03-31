@@ -76,12 +76,12 @@ void DTWWidget::drawWeather() {
 
   int retries = 0;
   while(!network->getJSON(url, &doc)) {
-    Serial.println("Failed to fetch weather data, retrying..");
+    Serial.println(F("Failed to fetch weather data, retrying.."));
     delay(1000);
     retries++;
     if(retries > 5) {
       display->setCursor(getMidX() - 30, getUpperY() + 150);
-      display->println("Failed to fetch weather information :(");
+      display->println(F("Failed to fetch weather information :("));
       return;
     }
   }
@@ -97,7 +97,7 @@ void DTWWidget::drawWeather() {
   display->setTextSize(1);
   display->setCursor(getMidX() - 20, getUpperY() + 200);
   display->print(doc["current"]["temp"].as<char *>());
-  display->println(" °C");
+  display->println(F(" °C"));
 
   // TODO: Forecast...
 }

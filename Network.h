@@ -16,6 +16,7 @@ class Network {
     void getDayName(char *dayNameStr, long offSet);
     bool getJSON(char* url, DynamicJsonDocument* doc);
     bool getData(char* url, char* data);
+    void getCurrentTimeInfo(struct tm* timeinfo, long offSet);
 
   private:
     void connect();

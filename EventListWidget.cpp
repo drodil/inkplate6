@@ -49,9 +49,9 @@ void EventListWidget::draw(bool partial) {
     }
     display->setFont(&Roboto_Light_36);
     display->print(events[i].startTime);
-    display->print(" - ");
+    display->print(F(" - "));
     display->print(events[i].endTime);
-    display->print("   ");
+    display->print(F("   "));
     display->println(events[i].name);
     // TODO: Show location if any
     // TODO: Limit event name length or wrap it

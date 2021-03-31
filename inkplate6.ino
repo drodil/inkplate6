@@ -28,9 +28,9 @@ void setup() {
   {
     display.setCursor(5, 230);
     display.setTextSize(2);
-    display.println("Hello and welcome to Inkplate!");
+    display.println(F("Hello and welcome to Inkplate!"));
     display.setCursor(5, 250);
-    display.println("Connecting to WiFi...");
+    display.println(F("Connecting to WiFi..."));
     display.display();
   }
 

@@ -23,12 +23,12 @@ bool Network::getJSON(char* url, DynamicJsonDocument* doc) {
     if (len > 0) {
       DeserializationError jsonError = deserializeJson(*doc, http.getStream());
       if (jsonError) {
-        Serial.print("JSON deserialize failed: ");
+        Serial.print(F("JSON deserialize failed: "));
         Serial.println(jsonError.c_str());
         error = true;
       }
     } else {
-      Serial.println("Length zero response");
+      Serial.println(F("Length zero response"));
       error = true;   
     }
   } else {
@@ -48,13 +48,13 @@ bool Network::getData(char* url, char* data) {
 
   int httpCode = http.begin(url);
   if (httpCode == 200) {
-      long n = 0;
-      while (http.getStream().available())
-          data[n++] = http.getStream().read();
-      data[n++] = 0;
+    long n = 0;
+    while (http.getStream().available())
+        data[n++] = http.getStream().read();
+    data[n++] = 0;
   } else {
-      Serial.println(httpCode);
-      error = true;
+    Serial.println(httpCode);
+    error = true;
   }
   return error;
 }
@@ -64,71 +64,66 @@ void Network::connect() {
     return;
   }
   
-  Serial.print("Connecting to WiFi...");
+  Serial.print(F("Connecting to WiFi..."));
   int retry = 0;
   while((WiFi.status() != WL_CONNECTED)) {
-    Serial.print(".");
+    Serial.print(F("."));
     delay(1000);
     ++retry;
     if(retry == 20) {
-      Serial.println("Cannot connect to WiFi, restarting.");
+      Serial.println(F("Cannot connect to WiFi, restarting."));
       delay(100);
       ESP.restart();
     }
   }
-  Serial.println(" connected!");
-
+  Serial.println(F(" connected!"));
   setTime();
 }
 
 void Network::setTime() {
-    configTime(0, 0, "pool.ntp.org", "time.nist.gov");
+  configTime(0, 0, "pool.ntp.org", "time.nist.gov");
 
-    Serial.print(F("Waiting for NTP time sync: "));
-    time_t nowSecs = time(nullptr);
-    while (nowSecs < 8 * 3600 * 2)
-    {
-        // Print a dot every half a second while time is not set
-        delay(500);
-        Serial.print(F("."));
-        yield();
-        nowSecs = time(nullptr);
-    }
+  Serial.print(F("Waiting for NTP time sync: "));
+  time_t nowSecs = time(nullptr);
+  while (nowSecs < 8 * 3600 * 2)
+  {
+      // Print a dot every half a second while time is not set
+      delay(500);
+      Serial.print(F("."));
+      yield();
+      nowSecs = time(nullptr);
+  }
 
-    Serial.println();
+  Serial.println();
 
-    // Used to store time info
-    struct tm timeinfo;
-    gmtime_r(&nowSecs, &timeinfo);
+  // Used to store time info
+  struct tm timeinfo;
+  gmtime_r(&nowSecs, &timeinfo);
 
-    Serial.print(F("Current time: "));
-    Serial.print(asctime(&timeinfo));
+  Serial.print(F("Current time: "));
+  Serial.print(asctime(&timeinfo));
+}
+
+void Network::getCurrentTimeInfo(struct tm* timeinfo, long offSet) {
+  time_t nowSecs = time(nullptr) + (long)TIMEZONE * 3600L + offSet;
+  gmtime_r(&nowSecs, timeinfo);
 }
 
 void Network::getTime(char *timeStr, long offSet)
 {
-    time_t nowSecs = time(nullptr) + (long)TIMEZONE * 3600L + offSet;
-
-    struct tm timeinfo;
-    gmtime_r(&nowSecs, &timeinfo);
-
-    strftime(timeStr, 16, TIME_FORMAT, &timeinfo);
+  struct tm timeinfo;
+  getCurrentTimeInfo(&timeinfo, offSet);
+  strftime(timeStr, 16, TIME_FORMAT, &timeinfo);
 }
 
 void Network::getDate(char *dateStr, long offSet) {
-    time_t nowSecs = time(nullptr) + (long)TIMEZONE * 3600L + offSet;
-
-    struct tm timeinfo;
-    gmtime_r(&nowSecs, &timeinfo);
-
-    strftime(dateStr, 32, DATE_FORMAT, &timeinfo);
+  struct tm timeinfo;
+  getCurrentTimeInfo(&timeinfo, offSet);
+  strftime(dateStr, 32, DATE_FORMAT, &timeinfo);
 }
 
 void Network::getDayName(char *dayNameStr, long offSet) {
-    time_t nowSecs = time(nullptr) + (long)TIMEZONE * 3600L + offSet;
-
-    struct tm timeinfo;
-    gmtime_r(&nowSecs, &timeinfo);
-
-    strcpy(dayNameStr, DAYS[timeinfo.tm_wday]);
+  struct tm timeinfo;
+  getCurrentTimeInfo(&timeinfo, offSet);
+  strcpy(dayNameStr, DAYS[timeinfo.tm_wday]);
 }
