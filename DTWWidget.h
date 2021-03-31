@@ -12,6 +12,8 @@ class DTWWidget : public Widget {
     void drawDate();
     void drawTime();
     void drawWeather();
+
+    int textColor;
 };
 
 #endif // DTWWIDGET_H

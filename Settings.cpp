@@ -13,16 +13,14 @@ const char* TIME_FORMAT = "%H:%M";
 const long TIMEZONE = 2L;
 
 // Localized day names starting from 0 = sunday
-const char* DAY0 = "Sunnuntai";
-const char* DAY1 = "Maanantai";
-const char* DAY2 = "Tiistai";
-const char* DAY3 = "Keskiviikko";
-const char* DAY4 = "Torstai";
-const char* DAY5 = "Perjantai";
-const char* DAY6 = "Lauantai";
+const char* DAYS[] = {"Sunnuntai", "Maanantai", "Tiistai", "Keskiviikko", "Torstai", "Perjantai", "Lauantai"};
+const char* DAYS_ABBR[] = {"Su", "Ma", "Ti", "Ke", "To", "Pe", "La"};
 
 // Weather params (see https://openweathermap.org/api/one-call-api)
-const float LATITUDE = 65.0;
-const float LONGITUDE = 35.0;
+const float LATITUDE = 64.9129;
+const float LONGITUDE = 25.5035;
 const char* LANG = "fi";
 const char* UNITS = "metric";
+
+char *CALENDAR_URLS[1] = {""};
+int NUM_CALENDAR_URLS = 1;

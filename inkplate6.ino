@@ -2,6 +2,7 @@
 
 #include "Network.h"
 #include "DTWWidget.h"
+#include "EventListWidget.h"
 
 #define DELAY_MS 60000 * 3
 
@@ -30,6 +31,11 @@ void setup() {
   dtw.setColorScheme(WIDGET_COLORSCHEME_LIGHT);
   dtw.setLocation(WIDGET_LOCATION_HALF_LEFT);
   dtw.draw(partialUpdate);
+
+  EventListWidget elw(&display, &network);
+  elw.setColorScheme(WIDGET_COLORSCHEME_DARK);
+  elw.setLocation(WIDGET_LOCATION_HALF_RIGHT);
+  elw.draw(partialUpdate);
 
   display.display();
     

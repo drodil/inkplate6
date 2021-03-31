@@ -13,18 +13,17 @@ extern const char* TIME_FORMAT;
 extern const long TIMEZONE;
 
 // Localized day names starting from 0 = sunday
-extern const char* DAY0;
-extern const char* DAY1;
-extern const char* DAY2;
-extern const char* DAY3;
-extern const char* DAY4;
-extern const char* DAY5;
-extern const char* DAY6;
+extern const char* DAYS[];
+extern const char* DAYS_ABBR[];
 
 // Weather params
 extern const float LATITUDE;
 extern const float LONGITUDE;
 extern const char* LANG;
 extern const char* UNITS;
+
+// Calendar URLS to show (ical, for example google calendar)
+extern char* CALENDAR_URLS[];
+extern int NUM_CALENDAR_URLS;
 
 #endif // SETTINGS_H

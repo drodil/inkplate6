@@ -30,15 +30,13 @@ const uint8_t *icons[18] = {icon_01d, icon_01n,
                             icon_13d, icon_13n, 
                             icon_50d, icon_50n};
 
-int color = WHITE;
-
 DTWWidget::DTWWidget(Inkplate* display, Network* network) : Widget(display, network) {
   
 }
 
 void DTWWidget::draw(bool partial) {
   if(colorScheme == WIDGET_COLORSCHEME_LIGHT) {
-    color = BLACK;
+    textColor = BLACK;
   }
   this->drawBackground();
   this->drawTime();
@@ -49,7 +47,7 @@ void DTWWidget::draw(bool partial) {
 }
 
 void DTWWidget::drawDate() {
-  display->setTextColor(color);
+  display->setTextColor(textColor);
   display->setTextSize(1);
   display->setFont(&Roboto_Light_36);
   network->getDayName(currentDay, 0);
@@ -62,7 +60,7 @@ void DTWWidget::drawDate() {
 }
 
 void DTWWidget::drawTime() {
-  display->setTextColor(color);
+  display->setTextColor(textColor);
   display->setFont(&Roboto_Light_48);
   network->getTime(currentTime, 0);
   display->setCursor(getMidX() - 10, getUpperY() + 60);
@@ -70,7 +68,7 @@ void DTWWidget::drawTime() {
 }
 
 void DTWWidget::drawWeather() {
-    display->setTextColor(color);
+  display->setTextColor(textColor);
   DynamicJsonDocument doc(2048);
   char url[256];
   sprintf(url, "https://api.openweathermap.org/data/2.5/onecall?lat=%d&lon=%d&exclude=minutely,alerts&units=%s&lang=%s&appid=%s", 
@@ -83,14 +81,14 @@ void DTWWidget::drawWeather() {
     retries++;
     if(retries > 5) {
       display->setCursor(getMidX() - 30, getUpperY() + 150);
-      display->println("Säädatan haku epäonnistui.. :(");
+      display->println("Failed to fetch weather information :(");
       return;
     }
   }
 
   for(int i = 0; i < 18; i++) {
     if(strcmp(abbrs[i], doc["current"]["weather"][0]["icon"]) == 0) {
-      display->drawBitmap(getMidX(), getMidY(), icons[i], 152, 152, color);
+      display->drawBitmap(getMidX(), getMidY(), icons[i], 152, 152, textColor);
       break;
     }
   }

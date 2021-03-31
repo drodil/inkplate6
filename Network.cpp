@@ -112,7 +112,7 @@ void Network::getTime(char *timeStr, long offSet)
     struct tm timeinfo;
     gmtime_r(&nowSecs, &timeinfo);
 
-    strftime(timeStr, 20, TIME_FORMAT, &timeinfo);
+    strftime(timeStr, 16, TIME_FORMAT, &timeinfo);
 }
 
 void Network::getDate(char *dateStr, long offSet) {
@@ -121,7 +121,7 @@ void Network::getDate(char *dateStr, long offSet) {
     struct tm timeinfo;
     gmtime_r(&nowSecs, &timeinfo);
 
-    strftime(dateStr, 20, DATE_FORMAT, &timeinfo);
+    strftime(dateStr, 32, DATE_FORMAT, &timeinfo);
 }
 
 void Network::getDayName(char *dayNameStr, long offSet) {
@@ -130,28 +130,5 @@ void Network::getDayName(char *dayNameStr, long offSet) {
     struct tm timeinfo;
     gmtime_r(&nowSecs, &timeinfo);
 
-    switch(timeinfo.tm_wday) {
-      default:
-      case 0:
-        strcpy(dayNameStr, DAY0);
-        break;
-      case 1:
-        strcpy(dayNameStr, DAY1);
-        break;
-      case 2:
-        strcpy(dayNameStr, DAY2);
-        break;
-      case 3:
-        strcpy(dayNameStr, DAY3);
-        break;
-      case 4:
-        strcpy(dayNameStr, DAY4);
-        break;
-      case 5:
-        strcpy(dayNameStr, DAY5);
-        break;
-      case 6:
-        strcpy(dayNameStr, DAY6);
-        break;
-    }
+    strcpy(dayNameStr, DAYS[timeinfo.tm_wday]);
 }
