@@ -44,6 +44,8 @@ class Widget {
     int getMidY();
     int getWidth();
     int getHeight();
+    int getScreenWidth();
+    int getScreenHeight();
 
   protected:
     void drawBackground();

@@ -5,9 +5,6 @@ char* WIFI_SSID = "";
 char* WIFI_PASSWORD = "";
 char* OPENWEATHERMAP_APIKEY = "";
 
-const unsigned DISPLAY_WIDTH = 800;
-const unsigned DISPLAY_HEIGHT = 600;
-
 // Date and time formats based on strftime
 const char* DATE_FORMAT = "%d.%m.%Y";
 const char* TIME_FORMAT = "%H:%M";
