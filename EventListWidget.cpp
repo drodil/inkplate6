@@ -49,8 +49,15 @@ void EventListWidget::draw(bool partial) {
     display->setFont(&Roboto_Light_36);
     display->print(events[i].startTime);
     display->print(" - ");
-    display->println(events[i].endTime);
+    display->print(events[i].endTime);
+    display->print("   ");
     display->println(events[i].name);
+    // TODO: Limit event name length or wrap it
+
+    if(getUpperY() + (i * 20) + addition >= getLowerY()) {
+      // TODO: Show how many events upcoming..
+      break;
+    }
   }
 }
 

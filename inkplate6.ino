@@ -21,11 +21,25 @@ const int fullRefresh = 5;
 void setup() {
   Serial.begin(115200);
   display.begin();
+  
+  display.setTextWrap(false);
 
+  if (refreshes == 0)
+  {
+    display.setCursor(5, 230);
+    display.setTextSize(2);
+    display.println("Hello and welcome to Inkplate!");
+    display.setCursor(5, 250);
+    display.println("Connecting to WiFi...");
+    display.display();
+  }
+
+  delay(5000);
   bool partialUpdate = refreshes % fullRefresh == 0;
   ++refreshes;
 
   network.init(WIFI_SSID, WIFI_PASSWORD);
+  display.clearDisplay();
 
   DTWWidget dtw(&display, &network);
   dtw.setColorScheme(WIDGET_COLORSCHEME_LIGHT);
