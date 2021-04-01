@@ -17,26 +17,29 @@ void Widget::setLocation(int location) {
 }
 
 void Widget::setColorScheme(int colorScheme) {
+  int color = colorScheme;
   if(display->getDisplayMode() == INKPLATE_1BIT) {
-    colorScheme = (colorScheme <= 3) ? WIDGET_COLORSCHEME_DARK : WIDGET_COLORSCHEME_LIGHT; 
+    color = (colorScheme <= 3) ? BLACK : WHITE; 
   }
-  this->colorScheme = colorScheme;
+  this->colorScheme = color;
 }
 
 int Widget::getUpperX() {
-  return location & 0x1000 ? 0 : getScreenWidth() / 2;
+  return (location & 0x1000) == 0x1000 ? 0 : getScreenWidth() / 2;
 }
 
 int Widget::getUpperY() {
-  return location & 0x0100 ? 0 : getScreenHeight() / 2;
+  return (location & 0x0100) == 0x0100 ? 0 : getScreenHeight() / 2;
 }
 
 int Widget::getLowerX() {
-  return location & 0x0010 ? (getScreenWidth() / 2) - 1 : getScreenWidth() - 1;
+  int w = (location & 0x0010) == 0x0010 ? (getScreenWidth() / 2) - 1 : getScreenWidth() - 1;
+  return getUpperX() + w;
 }
 
 int Widget::getLowerY() {
-  return location & 0x0001 ? (getScreenHeight() / 2) - 1 : getScreenHeight() - 1;
+  int h =(location & 0x0001) == 0x0001 ? (getScreenHeight() / 2) - 1 : getScreenHeight() - 1;
+  return getUpperY() + h;
 }
 
 int Widget::getMidX() {
@@ -57,7 +60,7 @@ int Widget::getHeight() {
 
 int Widget::getScreenWidth() {
   uint8_t rot = display->Adafruit_GFX::getRotation();
-  if(rot == 2 || rot == 4) {
+  if(rot == 0 || rot == 2) {
     return SCREEN_WIDTH;
   }
   return SCREEN_HEIGHT;
@@ -65,13 +68,17 @@ int Widget::getScreenWidth() {
 
 int Widget::getScreenHeight() {
   uint8_t rot = display->Adafruit_GFX::getRotation();
-  if(rot == 2 || rot == 4) {
+  if(rot == 0 || rot == 2) {
     return SCREEN_HEIGHT;
   }
   return SCREEN_WIDTH;
 }
 
 int Widget::getTextColor() {
+  if(display->getDisplayMode() == INKPLATE_1BIT) {
+    return colorScheme == BLACK ? WHITE : BLACK;
+  }
+  
   if(colorScheme > 3) {
       return BLACK;
   }
@@ -79,5 +86,5 @@ int Widget::getTextColor() {
 }
 
 void Widget::drawBackground() {
-  display->fillRect(getUpperX(), getUpperY(), getWidth() - 1, getHeight() -1, colorScheme);
+  display->fillRect(getUpperX(), getUpperY(), getWidth(), getHeight(), colorScheme);
 }

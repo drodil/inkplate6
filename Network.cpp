@@ -3,20 +3,24 @@
 void Network::init(char* ssid, char* password) {
   WiFi.mode(WIFI_STA);
   WiFi.begin(ssid, password);
-
-  http.getStream().setNoDelay(true);
-  http.getStream().setTimeout(5);
-
-  this->connect();
+  this->connect(true);
 }
 
 bool Network::getJSON(char* url, DynamicJsonDocument* doc) {
-  this->connect();
+  this->connect(false);
+
+  Serial.print(F("Getting JSON from "));
+  Serial.println(url);
   
   bool error = false;
   bool sleep = WiFi.getSleep();
   WiFi.setSleep(false);
 
+  HTTPClient http;
+  http.getStream().setTimeout(30);
+  http.getStream().flush();
+  http.begin(url);
+  
   int httpCode = http.GET();
   if (httpCode == 200) {
     int32_t len = http.getSize();
@@ -32,34 +36,49 @@ bool Network::getJSON(char* url, DynamicJsonDocument* doc) {
       error = true;   
     }
   } else {
+    Serial.print(F("Invalid response code: "));
     Serial.println(httpCode);
     error = true;
   }
+
+  http.end();
   WiFi.setSleep(sleep);
-  return error;
+  return !error;
 }
 
-bool Network::getData(char* url, char* data) {
-  this->connect();
+bool Network::getData(char* url, char* data, int maxLength) {
+  this->connect(false);
+  Serial.print(F("Getting data from "));
+  Serial.println(url);
   
   bool error = false;
   bool sleep = WiFi.getSleep();
   WiFi.setSleep(false);
 
-  int httpCode = http.begin(url);
-  if (httpCode == 200) {
-    long n = 0;
-    while (http.getStream().available())
-        data[n++] = http.getStream().read();
-    data[n++] = 0;
-  } else {
-    Serial.println(httpCode);
-    error = true;
+  HTTPClient http;
+  http.getStream().setTimeout(30);
+  http.getStream().flush();
+  http.begin(url);
+
+  int httpCode = http.GET();
+  
+  long n = 0;
+  while (http.getStream().available()) {
+    data[n++] = http.getStream().read();
+    if(n >= maxLength - 2) {
+      Serial.println(F("Could not fetch complete response, no buffer space!"));
+      error = true;
+      break;
+    }
   }
-  return error;
+  data[n++] = 0;
+  
+  http.end();
+  WiFi.setSleep(sleep);
+  return !error;
 }
 
-void Network::connect() {
+void Network::connect(bool initial) {
   if(WiFi.status() == WL_CONNECTED) {
     return;
   }
@@ -69,11 +88,15 @@ void Network::connect() {
   while((WiFi.status() != WL_CONNECTED)) {
     Serial.print(F("."));
     delay(1000);
-    ++retry;
-    if(retry == 20) {
-      Serial.println(F("Cannot connect to WiFi, restarting."));
-      delay(100);
-      ESP.restart();
+    if(++retry == 30) {
+      if(initial) {
+        Serial.println(F(" Cannot connect to WiFi, restarting."));
+        delay(100);
+        ESP.restart();
+      } else {
+        Serial.println(F(" Could not connect to WiFi, returning."));
+        return;
+      }
     }
   }
   Serial.println(F(" connected!"));

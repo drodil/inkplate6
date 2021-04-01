@@ -8,10 +8,10 @@
 #include "DTWWidget.h"
 #include "EventListWidget.h"
 
-#define DELAY_MS 60000 * 3
+#define DELAY_MS 60000
 
 // display object
-Inkplate display(INKPLATE_3BIT);
+Inkplate display(INKPLATE_1BIT);
 
 // network object
 Network network;
@@ -30,37 +30,36 @@ void setup() {
 
   if (refreshes == 0)
   {
-    display.setCursor(5, 230);
-    display.setTextSize(2);
-    display.println(F("Hello and welcome to Inkplate!"));
-    display.setCursor(5, 250);
+    display.setTextColor(BLACK);
+    display.setCursor(60, 230);
+    display.setTextSize(3);
+    display.println(F("Welcome!"));
+    display.setCursor(60, 280);
     display.println(F("Connecting to WiFi..."));
     display.display();
+    delay(1000);
+    network.init(WIFI_SSID, WIFI_PASSWORD);
+    display.clearDisplay();
   }
+}
 
-  delay(5000);
-  bool partialUpdate = refreshes % fullRefresh == 0;
+void loop() {
+  bool partialUpdate = refreshes % fullRefresh != 0;
+  if(!partialUpdate) {
+    display.clearDisplay();
+  }
   ++refreshes;
-
-  network.init(WIFI_SSID, WIFI_PASSWORD);
-  display.clearDisplay();
-
-  DTWWidget dtw(&display, &network);
-  dtw.setColorScheme(WIDGET_COLORSCHEME_LIGHT);
-  dtw.setLocation(WIDGET_LOCATION_HALF_RIGHT);
-  dtw.draw(partialUpdate);
 
   EventListWidget elw(&display, &network);
   elw.setColorScheme(WIDGET_COLORSCHEME_DARK);
   elw.setLocation(WIDGET_LOCATION_HALF_LEFT);
   elw.draw(partialUpdate);
 
-  display.display();
-    
-  esp_sleep_enable_timer_wakeup(1000L * DELAY_MS);
-  (void)esp_deep_sleep_start();
-}
+  DTWWidget dtw(&display, &network);
+  dtw.setColorScheme(WIDGET_COLORSCHEME_LIGHT);
+  dtw.setLocation(WIDGET_LOCATION_HALF_RIGHT);
+  dtw.draw(partialUpdate);
 
-void loop() {
-  // Nothing here.
+  partialUpdate ? display.partialUpdate() : display.display();
+  delay(DELAY_MS);
 }

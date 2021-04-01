@@ -15,13 +15,12 @@ class Network {
     void getDate(char *dateStr, long offSet);
     void getDayName(char *dayNameStr, long offSet);
     bool getJSON(char* url, DynamicJsonDocument* doc);
-    bool getData(char* url, char* data);
+    bool getData(char* url, char* data, int maxLength);
     void getCurrentTimeInfo(struct tm* timeinfo, long offSet);
 
   private:
-    void connect();
+    void connect(bool initial);
     void setTime();
-    HTTPClient http;
 };
 
 #endif // NETWORK_H

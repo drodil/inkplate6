@@ -4,26 +4,15 @@
 #define EVENT_LIST_WIDGET_H
 
 class EventListWidget : public Widget {
-public:
-  struct Event
-  {
-    char name[128];
-    char startTime[16];
-    char endTime[16];
-    char date[32];
-    char location[128];
-    int timeStamp;
-  };
-  
+public:  
   EventListWidget(Inkplate* display, Network* network);
   void draw(bool partial);
 
 private:
-  Event events[128];
   int eventsNum;
 
-  void parseEvents(char* data);
-  void icalTimeToTm(char* time, struct tm* ret);
+  int parseEvents(char* data);
+  void icalTimeToTm(char* time, struct tm* ret, bool* fullDay);
 };
 
 #endif // EVENT_LIST_WIDGET_H

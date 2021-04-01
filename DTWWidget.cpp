@@ -1,8 +1,8 @@
 #include "DTWWidget.h"
 
-#include "Fonts/Roboto_Light_120.h"
 #include "Fonts/Roboto_Light_36.h"
 #include "Fonts/Roboto_Light_48.h"
+#include "Fonts/FreeMono9pt7b.h"
 
 #include "icons.h"
 
@@ -37,64 +37,76 @@ DTWWidget::DTWWidget(Inkplate* display, Network* network) : Widget(display, netw
 void DTWWidget::draw(bool partial) {
   this->drawBackground();
   this->drawTime();
-  if(!partial) {
-    this->drawDate();
-    this->drawWeather();
-  }
+  this->drawDate();
+  this->drawWeather(partial);
 }
 
 void DTWWidget::drawDate() {
+  Serial.println(F("Drawing date"));
   display->setTextColor(getTextColor());
   display->setTextSize(1);
   display->setFont(&Roboto_Light_36);
   network->getDayName(currentDay, 0);
-  display->setCursor(getMidX() - 30, getUpperY() + 10);
+  display->setCursor(getMidX() - 90, getUpperY() + 50);
   display->println(currentDay);
   
   network->getDate(currentDate, 0);
-  display->setCursor(getMidX() - 30, getUpperY() + 30);
+  display->setCursor(getMidX() - 90, getUpperY() + 90);
   display->println(currentDate);
 }
 
 void DTWWidget::drawTime() {
+  Serial.println(F("Drawing time"));
   display->setTextColor(getTextColor());
   display->setFont(&Roboto_Light_48);
+  display->setTextSize(2);
   network->getTime(currentTime, 0);
-  display->setCursor(getMidX() - 10, getUpperY() + 60);
+  display->setCursor(getMidX() - 120, getUpperY() + 200);
   display->println(currentTime);
 }
 
-void DTWWidget::drawWeather() {
+void DTWWidget::drawWeather(bool partial) {
+  Serial.println(F("Drawing weather"));
   display->setTextColor(getTextColor());
-  DynamicJsonDocument doc(2048);
-  char url[256];
-  sprintf(url, "https://api.openweathermap.org/data/2.5/onecall?lat=%d&lon=%d&exclude=minutely,alerts&units=%s&lang=%s&appid=%s", 
-          LATITUDE, LONGITUDE, UNITS, LANG, OPENWEATHERMAP_APIKEY);
+  display->setTextSize(1);
 
-  int retries = 0;
-  while(!network->getJSON(url, &doc)) {
-    Serial.println(F("Failed to fetch weather data, retrying.."));
-    delay(1000);
-    retries++;
-    if(retries > 5) {
-      display->setCursor(getMidX() - 30, getUpperY() + 150);
-      display->println(F("Failed to fetch weather information :("));
-      return;
+  if(!partial) {
+    DynamicJsonDocument doc(2048);
+    char* url = new char[256];
+    sprintf(url, "https://api.openweathermap.org/data/2.5/onecall?lat=%f&lon=%f&exclude=minutely,hourly,daily,alerts&units=%s&lang=%s&appid=%s", 
+            LATITUDE, LONGITUDE, UNITS, LANG, OPENWEATHERMAP_APIKEY);
+  
+    int retry = 0;
+    bool success = true;
+    while(!network->getJSON(url, &doc)) {
+      Serial.println(F("Failed to fetch weather.."));
+      delay(500);
+      if(++retry > 1) {
+        success = false;
+        break;
+      }
+    }
+    delete url;
+
+    if(success) {
+      strncpy(this->prevIcon, doc[F("current")][F("weather")][0][F("icon")] | "50d", 4);
+      sprintf(this->prevTemp, "%.01f", doc[F("current")][F("temp")] | 0.00);
     }
   }
-
+  
   for(int i = 0; i < 18; i++) {
-    if(strcmp(abbrs[i], doc["current"]["weather"][0]["icon"]) == 0) {
-      display->drawBitmap(getMidX(), getMidY(), icons[i], 152, 152, getTextColor());
+    if(strcmp(abbrs[i], prevIcon) == 0) {
+      display->drawBitmap(getMidX() - 152, getUpperY() + 220, icons[i], 152, 152, getTextColor());
       break;
     }
   }
 
-  display->setFont(&Roboto_Light_36);
+  display->setFont(&Roboto_Light_48);
   display->setTextSize(1);
-  display->setCursor(getMidX() - 20, getUpperY() + 200);
-  display->print(doc["current"]["temp"].as<char *>());
-  display->println(F(" °C"));
+  display->setCursor(getMidX(), getUpperY() + 315);
+  display->print(prevTemp);
+  display->println(F("°C"));
 
-  // TODO: Forecast...
+  display->setFont(&FreeMono9pt7b);
+  display->setCursor(getMidX() - 150, getUpperY() + 400);
 }
