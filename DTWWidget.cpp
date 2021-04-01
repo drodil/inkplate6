@@ -52,11 +52,12 @@ void DTWWidget::drawDate() {
   display->setTextSize(1);
   display->setFont(&Roboto_Light_36);
   network->getDayName(currentDay, 0);
-  display->setCursor(getMidX() - 90, getUpperY() + 50);
+  int red = 7 * strlen(currentDay);
+  display->setCursor(getMidX() - red, getUpperY() + 60);
   display->println(currentDay);
   
   network->getDate(currentDate, 0);
-  display->setCursor(getMidX() - 90, getUpperY() + 90);
+  display->setCursor(getMidX() - 90, getUpperY() + 95);
   display->println(currentDate);
 }
 
@@ -105,38 +106,39 @@ void DTWWidget::drawWeather() {
   
   for(int i = 0; i < 18; i++) {
     if(strcmp(abbrs[i], prevIcon) == 0) {
-      display->drawBitmap(getMidX() - 152, getUpperY() + 220, icons[i], 152, 152, getTextColor());
+      display->drawBitmap(getMidX() - 130, getUpperY() + 210, icons[i], 152, 152, getTextColor());
       break;
     }
   }
 
   display->setFont(&Roboto_Light_48);
   display->setTextSize(1);
-  display->setCursor(getMidX(), getUpperY() + 315);
+  display->setCursor(getMidX(), getUpperY() + 300);
   display->print(prevTemp);
   display->println(F("°C"));
 
   display->setFont(&FreeSans12pt7b);
-  display->setCursor(getMidX() - 120, getUpperY() + 380);
+  int red = 5 * strlen(prevDescription);
+  display->setCursor(getMidX() - red, getUpperY() + 365);
   display->println(replaceUmlauts(prevDescription));
   
-  display->setCursor(getMidX() - 120, getUpperY() + 430);
+  display->setCursor(getMidX() - 110, getUpperY() + 430);
   display->print(FEELS_LIKE);
   display->println(F(":"));
-  display->setCursor(getMidX() + 50, getUpperY() + 430);
+  display->setCursor(getMidX() + 55, getUpperY() + 430);
   display->print(prevFeelsLike);
   display->println(F("°C"));
 
-  display->setCursor(getMidX() - 120, getUpperY() + 460);
+  display->setCursor(getMidX() - 110, getUpperY() + 460);
   display->print(WIND_SPEED);
   display->println(F(":"));
-  display->setCursor(getMidX() + 50, getUpperY() + 460);
+  display->setCursor(getMidX() + 55, getUpperY() + 460);
   display->print(prevWindSpeed);
   display->println(F("m/s"));
 
-  display->setCursor(getMidX() - 120, getUpperY() + 490);
+  display->setCursor(getMidX() - 110, getUpperY() + 490);
   display->print(WIND_DIRECTION);
   display->println(F(":"));
-  display->setCursor(getMidX() + 50, getUpperY() + 490);
+  display->setCursor(getMidX() + 55, getUpperY() + 490);
   display->println(prevWindDir);
 }

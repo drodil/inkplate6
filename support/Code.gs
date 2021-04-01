@@ -1,5 +1,5 @@
 const doGet = () => {
-  var calendarId = 'cercqr3un7d837v8234e4qrrnk@group.calendar.google.com';
+  var calendarId = 'YOUR_GOOGLE_CALENDAR_ID';
   var now = new Date();
   var events = Calendar.Events.list(calendarId, {
     timeMin: now.toISOString(),
