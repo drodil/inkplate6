@@ -1,5 +1,8 @@
 #include "Network.h"
 
+#include <WiFi.h>
+#include <HTTPClient.h>
+
 void Network::init(char* ssid, char* password) {
   WiFi.mode(WIFI_STA);
   WiFi.begin(ssid, password);
@@ -17,23 +20,20 @@ bool Network::getJSON(char* url, DynamicJsonDocument* doc) {
   WiFi.setSleep(false);
 
   HTTPClient http;
-  http.getStream().setTimeout(30);
+  http.setFollowRedirects(HTTPC_FORCE_FOLLOW_REDIRECTS);
+  http.getStream().setTimeout(60);
   http.getStream().flush();
   http.begin(url);
   
   int httpCode = http.GET();
   if (httpCode == 200) {
-    int32_t len = http.getSize();
-    if (len > 0) {
-      DeserializationError jsonError = deserializeJson(*doc, http.getStream());
-      if (jsonError) {
-        Serial.print(F("JSON deserialize failed: "));
-        Serial.println(jsonError.c_str());
-        error = true;
-      }
-    } else {
-      Serial.println(F("Length zero response"));
-      error = true;   
+    // Uncomment to log response
+    // ReadLoggingStream loggingStream(http.getStream(), Serial);
+    DeserializationError jsonError = deserializeJson(*doc, http.getStream());
+    if (jsonError) {
+      Serial.print(F("JSON deserialize failed: "));
+      Serial.println(jsonError.c_str());
+      error = true;
     }
   } else {
     Serial.print(F("Invalid response code: "));
@@ -56,13 +56,16 @@ bool Network::getData(char* url, char* data, int maxLength) {
   WiFi.setSleep(false);
 
   HTTPClient http;
-  http.getStream().setTimeout(30);
+  http.setFollowRedirects(HTTPC_FORCE_FOLLOW_REDIRECTS);
+  http.getStream().setTimeout(60);
   http.getStream().flush();
   http.begin(url);
 
   int httpCode = http.GET();
   
   long n = 0;
+  // Uncomment to log response
+  // ReadLoggingStream loggingStream(http.getStream(), Serial);
   while (http.getStream().available()) {
     data[n++] = http.getStream().read();
     if(n >= maxLength - 2) {

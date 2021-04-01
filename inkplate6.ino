@@ -6,7 +6,7 @@
 
 #include "Network.h"
 #include "DTWWidget.h"
-#include "EventListWidget.h"
+#include "GCalEventListWidget.h"
 
 #define DELAY_MS 60000
 
@@ -20,7 +20,7 @@ Network network;
 RTC_DATA_ATTR unsigned refreshes = 0;
 
 // constant to determine when to full update
-const int fullRefresh = 5;
+const int fullRefresh = 10;
 
 void setup() {
   Serial.begin(115200);
@@ -50,7 +50,7 @@ void loop() {
   }
   ++refreshes;
 
-  EventListWidget elw(&display, &network);
+  GCalEventListWidget elw(&display, &network);
   elw.setColorScheme(WIDGET_COLORSCHEME_DARK);
   elw.setLocation(WIDGET_LOCATION_HALF_LEFT);
   elw.draw(partialUpdate);

@@ -26,4 +26,9 @@ extern const char* UNITS;
 extern char* CALENDAR_URLS[];
 extern int NUM_CALENDAR_URLS;
 
+// Google apps script url for calendar (see Code.gs & appsscript.json)
+// Does not work out of the box because of HTTPS redirect not working with HTTPClient
+// Got around this with proxy server with small PHP script calling the Apps Script and returning response
+extern char *GAPPS_SCRIPT_URL;
+
 #endif // SETTINGS_H

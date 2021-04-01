@@ -10,7 +10,7 @@ const char* DATE_FORMAT = "%d.%m.%Y";
 const char* TIME_FORMAT = "%H:%M";
 
 // Timezone
-const long TIMEZONE = 2L;
+const long TIMEZONE = 3L;
 
 // Localized day names starting from 0 = sunday
 const char* DAYS[] = {"Sunnuntai", "Maanantai", "Tiistai", "Keskiviikko", "Torstai", "Perjantai", "Lauantai"};
@@ -24,3 +24,5 @@ const char* UNITS = "metric";
 
 char *CALENDAR_URLS[1] = {""};
 int NUM_CALENDAR_URLS = 1;
+
+char *GAPPS_SCRIPT_URL = "";
