@@ -2,7 +2,7 @@
 
 #include "Fonts/Roboto_Light_36.h"
 #include "Fonts/Roboto_Light_48.h"
-#include "Fonts/FreeMono9pt7b.h"
+#include "Fonts/FreeSans9pt7b.h"
 
 #include "Util.h"
 
@@ -57,18 +57,18 @@ void GCalEventListWidget::draw(bool partial) {
   for(int i = 0; i < eventsNum; i++) {
     if(strcmp(prevDay, events[i].date) != 0) {
       if(i > 0) {
-        addition += 40;
+        addition += 35;
       }
       display->setCursor(getUpperX() + 20, getUpperY() + (i * 20) + addition);
       display->setFont(&Roboto_Light_36);
       display->println(events[i].date);
       strcpy(prevDay, events[i].date);
-      addition += 25;
+      addition += 28;
     }
     display->setCursor(getUpperX() + 20, getUpperY() + (i * 20) + addition);
-    display->setFont(&FreeMono9pt7b);
+    display->setFont(&FreeSans9pt7b);
     if(events[i].fullDay) {
-      display->print(F(":: "));
+      display->print(F(" *** "));
     } else {
       display->print(events[i].startTime);
       display->print(F("-"));
@@ -79,7 +79,7 @@ void GCalEventListWidget::draw(bool partial) {
     // TODO: Show location if any
     // TODO: Limit event name length or wrap it
 
-    if(getUpperY() + (i * 20) + addition >= getLowerY() - 50) {
+    if(getUpperY() + (i * 20) + addition >= getLowerY() - 100) {
       // TODO: Show how many events upcoming..
       break;
     }
@@ -96,6 +96,7 @@ int GCalEventListWidget::parseEvents(DynamicJsonDocument* doc) {
   for (JsonArray::iterator it=arr.begin(); it != arr.end(); ++it) {
     JsonObject event = it->as<JsonObject>();
     strncpy(events[i].name, event["name"], 64);
+    events[i].fullDay = event["fullDay"] | false;
 
     struct tm eventStart = {0}, eventEnd = {0};
     char start[24];
@@ -104,6 +105,9 @@ int GCalEventListWidget::parseEvents(DynamicJsonDocument* doc) {
     strncpy(end, event[F("end")] | "", 24);
     parseIsoTime(start, &eventStart);
     parseIsoTime(end, &eventEnd);
+
+    eventStart.tm_hour += TIMEZONE;
+    eventEnd.tm_hour += TIMEZONE;
     
     if(eventStart.tm_mday == today.tm_mday && eventStart.tm_mon == today.tm_mon && eventStart.tm_year == today.tm_year) {
       strcpy(events[i].date, TODAY);

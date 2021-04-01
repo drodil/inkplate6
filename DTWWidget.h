@@ -11,10 +11,14 @@ class DTWWidget : public Widget {
   private:
     void drawDate();
     void drawTime();
-    void drawWeather(bool partial);
+    void drawWeather();
 
+    char prevDescription[32];
     char prevTemp[5];
     char prevIcon[4];
+    char prevFeelsLike[5];
+    char prevWindSpeed[5];
+    char prevWindDir[3];
 };
 
 #endif // DTWWIDGET_H

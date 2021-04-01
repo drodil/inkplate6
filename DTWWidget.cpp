@@ -2,9 +2,10 @@
 
 #include "Fonts/Roboto_Light_36.h"
 #include "Fonts/Roboto_Light_48.h"
-#include "Fonts/FreeMono9pt7b.h"
+#include "Fonts/FreeSans12pt7b.h"
 
 #include "icons.h"
+#include "Util.h"
 
 char currentTime[16] = "00:00";
 char currentDate[16] = "dd.mm.yyyy";
@@ -35,10 +36,14 @@ DTWWidget::DTWWidget(Inkplate* display, Network* network) : Widget(display, netw
 }
 
 void DTWWidget::draw(bool partial) {
-  this->drawBackground();
+  if(!partial) {
+    this->drawBackground();
+  }
   this->drawTime();
-  this->drawDate();
-  this->drawWeather(partial);
+  if(!partial) {
+    this->drawDate();
+    this->drawWeather();
+  }
 }
 
 void DTWWidget::drawDate() {
@@ -57,6 +62,7 @@ void DTWWidget::drawDate() {
 
 void DTWWidget::drawTime() {
   Serial.println(F("Drawing time"));
+  display->fillRect(getUpperX(), getUpperY() + 100, getWidth(), getUpperY() + 150, colorScheme);
   display->setTextColor(getTextColor());
   display->setFont(&Roboto_Light_48);
   display->setTextSize(2);
@@ -65,33 +71,36 @@ void DTWWidget::drawTime() {
   display->println(currentTime);
 }
 
-void DTWWidget::drawWeather(bool partial) {
+void DTWWidget::drawWeather() {
   Serial.println(F("Drawing weather"));
   display->setTextColor(getTextColor());
   display->setTextSize(1);
 
-  if(!partial) {
-    DynamicJsonDocument doc(2048);
-    char* url = new char[256];
-    sprintf(url, "https://api.openweathermap.org/data/2.5/onecall?lat=%f&lon=%f&exclude=minutely,hourly,daily,alerts&units=%s&lang=%s&appid=%s", 
-            LATITUDE, LONGITUDE, UNITS, LANG, OPENWEATHERMAP_APIKEY);
-  
-    int retry = 0;
-    bool success = true;
-    while(!network->getJSON(url, &doc)) {
-      Serial.println(F("Failed to fetch weather.."));
-      delay(500);
-      if(++retry > 1) {
-        success = false;
-        break;
-      }
-    }
-    delete url;
+  DynamicJsonDocument doc(2048);
+  char* url = new char[256];
+  sprintf(url, "https://api.openweathermap.org/data/2.5/onecall?lat=%f&lon=%f&exclude=minutely,hourly,daily,alerts&units=%s&lang=%s&appid=%s", 
+          LATITUDE, LONGITUDE, UNITS, LANG, OPENWEATHERMAP_APIKEY);
 
-    if(success) {
-      strncpy(this->prevIcon, doc[F("current")][F("weather")][0][F("icon")] | "50d", 4);
-      sprintf(this->prevTemp, "%.01f", doc[F("current")][F("temp")] | 0.00);
+  int retry = 0;
+  bool success = true;
+  while(!network->getJSON(url, &doc)) {
+    Serial.println(F("Failed to fetch weather.."));
+    delay(500);
+    if(++retry > 1) {
+      success = false;
+      break;
     }
+  }
+  delete url;
+
+  if(success) {
+    strncpy(this->prevDescription, doc[F("current")][F("weather")][0][F("description")] | "", 30);
+    *this->prevDescription = toupper(*this->prevDescription);
+    strncpy(this->prevIcon, doc[F("current")][F("weather")][0][F("icon")] | "50d", 4);
+    sprintf(this->prevTemp, "%.01f", doc[F("current")][F("temp")] | 0.00);
+    sprintf(this->prevFeelsLike, "%.01f", doc[F("current")][F("feels_like")] | 0.00);
+    sprintf(this->prevWindSpeed, "%.01f", doc[F("current")][F("wind_speed")] | 0.00);
+    sprintf(this->prevWindDir, "%d", doc[F("current")][F("wind_deg")] | 0);
   }
   
   for(int i = 0; i < 18; i++) {
@@ -107,6 +116,27 @@ void DTWWidget::drawWeather(bool partial) {
   display->print(prevTemp);
   display->println(F("°C"));
 
-  display->setFont(&FreeMono9pt7b);
-  display->setCursor(getMidX() - 150, getUpperY() + 400);
+  display->setFont(&FreeSans12pt7b);
+  display->setCursor(getMidX() - 120, getUpperY() + 380);
+  display->println(replaceUmlauts(prevDescription));
+  
+  display->setCursor(getMidX() - 120, getUpperY() + 430);
+  display->print(FEELS_LIKE);
+  display->println(F(":"));
+  display->setCursor(getMidX() + 50, getUpperY() + 430);
+  display->print(prevFeelsLike);
+  display->println(F("°C"));
+
+  display->setCursor(getMidX() - 120, getUpperY() + 460);
+  display->print(WIND_SPEED);
+  display->println(F(":"));
+  display->setCursor(getMidX() + 50, getUpperY() + 460);
+  display->print(prevWindSpeed);
+  display->println(F("m/s"));
+
+  display->setCursor(getMidX() - 120, getUpperY() + 490);
+  display->print(WIND_DIRECTION);
+  display->println(F(":"));
+  display->setCursor(getMidX() + 50, getUpperY() + 490);
+  display->println(prevWindDir);
 }

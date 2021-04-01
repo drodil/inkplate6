@@ -23,6 +23,9 @@ const float LATITUDE = 64.9129;
 const float LONGITUDE = 25.5035;
 const char* LANG = "fi";
 const char* UNITS = "metric";
+const char* FEELS_LIKE = "Tuntuu kuin";
+const char* WIND_SPEED = "Tuulen nopeus";
+const char* WIND_DIRECTION = "Tuulen suunta";
 
 char *CALENDAR_URLS[1] = {""};
 int NUM_CALENDAR_URLS = 1;

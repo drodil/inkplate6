@@ -23,6 +23,9 @@ extern const float LATITUDE;
 extern const float LONGITUDE;
 extern const char* LANG;
 extern const char* UNITS;
+extern const char* FEELS_LIKE;
+extern const char* WIND_SPEED;
+extern const char* WIND_DIRECTION;
 
 // Calendar URLS to show (ical, for example google calendar)
 extern char* CALENDAR_URLS[];
