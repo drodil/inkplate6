@@ -15,6 +15,8 @@ extern const long TIMEZONE;
 // Localized day names starting from 0 = sunday
 extern const char* DAYS[];
 extern const char* DAYS_ABBR[];
+extern const char* TODAY;
+extern const char* TOMORROW;
 
 // Weather params
 extern const float LATITUDE;

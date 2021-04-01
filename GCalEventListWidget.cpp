@@ -87,6 +87,10 @@ void GCalEventListWidget::draw(bool partial) {
 }
 
 int GCalEventListWidget::parseEvents(DynamicJsonDocument* doc) {
+  struct tm today = {0}, tomorrow = {0};
+  network->getCurrentTimeInfo(&today, 0);
+  network->getCurrentTimeInfo(&tomorrow, 86400L);
+  
   JsonArray arr = doc->as<JsonArray>();
   int i = 0;
   for (JsonArray::iterator it=arr.begin(); it != arr.end(); ++it) {
@@ -101,11 +105,17 @@ int GCalEventListWidget::parseEvents(DynamicJsonDocument* doc) {
     parseIsoTime(start, &eventStart);
     parseIsoTime(end, &eventEnd);
     
-    char date[16];
-    char dateAndDay[32];
-    strftime(date, 16, DATE_FORMAT, &eventStart);
-    sprintf(dateAndDay, "%s %s", DAYS_ABBR[eventStart.tm_wday], date);
-    strcpy(events[i].date, dateAndDay);
+    if(eventStart.tm_mday == today.tm_mday && eventStart.tm_mon == today.tm_mon && eventStart.tm_year == today.tm_year) {
+      strcpy(events[i].date, TODAY);
+    } else if(eventStart.tm_mday == tomorrow.tm_mday && eventStart.tm_mon == tomorrow.tm_mon && eventStart.tm_year == tomorrow.tm_year) {
+      strcpy(events[i].date, TOMORROW);
+    } else {
+      char date[16];
+      char dateAndDay[32];
+      strftime(date, 16, DATE_FORMAT, &eventStart);
+      sprintf(dateAndDay, "%s %s", DAYS_ABBR[eventStart.tm_wday], date);
+      strcpy(events[i].date, dateAndDay);
+    }
 
     strftime(events[i].startTime, 16, TIME_FORMAT, &eventStart);
     strftime(events[i].endTime, 16, TIME_FORMAT, &eventEnd);

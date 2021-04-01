@@ -15,6 +15,8 @@ const long TIMEZONE = 3L;
 // Localized day names starting from 0 = sunday
 const char* DAYS[] = {"Sunnuntai", "Maanantai", "Tiistai", "Keskiviikko", "Torstai", "Perjantai", "Lauantai"};
 const char* DAYS_ABBR[] = {"Su", "Ma", "Ti", "Ke", "To", "Pe", "La"};
+const char* TODAY = "Tanaan";
+const char* TOMORROW = "Huomenna";
 
 // Weather params (see https://openweathermap.org/api/one-call-api)
 const float LATITUDE = 64.9129;
