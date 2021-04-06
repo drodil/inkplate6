@@ -26,8 +26,9 @@ const char* UNITS = "metric";
 const char* FEELS_LIKE = "Tuntuu kuin";
 const char* WIND_SPEED = "Tuulen nopeus";
 const char* WIND_DIRECTION = "Tuulen suunta";
+const char* HUMIDITY = "Kosteus";
 
-char *CALENDAR_URLS[1] = {""};
-int NUM_CALENDAR_URLS = 1;
+char *CALENDAR_URLS[1] = {};
+int NUM_CALENDAR_URLS = 0;
 
 char *GAPPS_SCRIPT_URL = "";

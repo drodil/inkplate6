@@ -26,6 +26,7 @@ extern const char* UNITS;
 extern const char* FEELS_LIKE;
 extern const char* WIND_SPEED;
 extern const char* WIND_DIRECTION;
+extern const char* HUMIDITY;
 
 // Calendar URLS to show (ical, for example google calendar)
 extern char* CALENDAR_URLS[];

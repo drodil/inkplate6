@@ -3,9 +3,11 @@
 #include "Fonts/Roboto_Light_36.h"
 #include "Fonts/Roboto_Light_48.h"
 #include "Fonts/FreeSans9pt7b.h"
+#include "Fonts/FreeSans12pt7b.h"
 
 #include "Util.h"
 
+// Presents single event with human readable times and date
 struct Event
 {
   char name[64];
@@ -15,6 +17,7 @@ struct Event
   bool fullDay;
 };
 
+// Array of events fetched from gcal
 Event* events = new Event[32]();
 
 GCalEventListWidget::GCalEventListWidget(Inkplate* display, Network* network) : Widget(display, network) {
@@ -22,6 +25,7 @@ GCalEventListWidget::GCalEventListWidget(Inkplate* display, Network* network) : 
 }
 
 void GCalEventListWidget::draw(bool partial) {
+  // Do not update if partial update and there is events in the list
   if(partial && eventsNum > 0) {
     return;
   }
@@ -49,24 +53,39 @@ void GCalEventListWidget::draw(bool partial) {
   display->setTextColor(getTextColor());
   display->setTextSize(1);
   char prevDay[32];
-  int addition = 60;
+  int addition = 30;
   // TODO: Show no events text
   Serial.print(F("Number of events: "));
   Serial.println(eventsNum);
+  int margin = 30;
+  int day = 0;
   
   for(int i = 0; i < eventsNum; i++) {
+    // Show dates between events
     if(strcmp(prevDay, events[i].date) != 0) {
       if(i > 0) {
+        display->drawFastHLine(getUpperX(), getUpperY() + (i * margin) + addition - 7, getWidth(), getTextColor());
         addition += 35;
       }
-      display->setCursor(getUpperX() + 20, getUpperY() + (i * 20) + addition);
+      display->setCursor(getUpperX() + 10, getUpperY() + (i * margin) + addition);
       display->setFont(&Roboto_Light_36);
       display->println(events[i].date);
       strcpy(prevDay, events[i].date);
-      addition += 28;
+      addition += margin + 8;
+      ++day;
+      if(day == 3) {
+        margin = 20;
+        addition += 20;
+      }
     }
-    display->setCursor(getUpperX() + 20, getUpperY() + (i * 20) + addition);
-    display->setFont(&FreeSans9pt7b);
+    
+    display->setCursor(getUpperX() + 11, getUpperY() + (i * margin) + addition);
+    if(margin == 30) {
+      display->setFont(&FreeSans12pt7b);  
+    } else {
+      display->setFont(&FreeSans9pt7b);
+    }
+    
     if(events[i].fullDay) {
       display->print(F(" *** "));
     } else {
@@ -79,7 +98,7 @@ void GCalEventListWidget::draw(bool partial) {
     // TODO: Show location if any
     // TODO: Limit event name length or wrap it
 
-    if(getUpperY() + (i * 20) + addition >= getLowerY() - 100) {
+    if(getUpperY() + (i * margin) + addition >= getLowerY() - 70) {
       // TODO: Show how many events upcoming..
       break;
     }
@@ -108,7 +127,7 @@ int GCalEventListWidget::parseEvents(DynamicJsonDocument* doc) {
 
     eventStart.tm_hour += TIMEZONE;
     eventEnd.tm_hour += TIMEZONE;
-    
+
     if(eventStart.tm_mday == today.tm_mday && eventStart.tm_mon == today.tm_mon && eventStart.tm_year == today.tm_year) {
       strcpy(events[i].date, TODAY);
     } else if(eventStart.tm_mday == tomorrow.tm_mday && eventStart.tm_mon == tomorrow.tm_mon && eventStart.tm_year == tomorrow.tm_year) {
@@ -129,7 +148,7 @@ int GCalEventListWidget::parseEvents(DynamicJsonDocument* doc) {
 }
 
 void GCalEventListWidget::parseIsoTime(char* time, struct tm* ret) {
-    // Datetime
+    // Datetime parsing from ISO format to tm struct
     // 012345678901234567890123
     // 2021-04-02T12:00:00.000Z
     char temp[128];
