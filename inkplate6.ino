@@ -30,7 +30,7 @@ void setup() {
 
   // Set rotation of the screen 1-4 (1 & 3 = portrait, 2 & 4 = landscape)
   // If changing to portrait, change Widget.cpp resolution as well
-  display.setRotation(2);
+  display.setRotation(4);
   display.setTextWrap(false);
 
   // Partial update only works with 1bit mode
@@ -72,6 +72,10 @@ void loop() {
   dtw.draw(partialUpdate);
 
   // Display and delay for next loop
-  partialUpdate ? display.partialUpdate() : display.display();
+  if(partialUpdate) {
+    display.partialUpdate();
+  } else {
+    display.display();
+  } 
   delay(DELAY_MS);
 }

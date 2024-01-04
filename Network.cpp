@@ -1,3 +1,8 @@
+// #include <StreamUtils.h>
+// #include <StreamUtils.hpp>
+
+#include <Inkplate.h>
+
 #include "Network.h"
 
 #include <WiFi.h>
@@ -20,15 +25,17 @@ bool Network::getJSON(char* url, DynamicJsonDocument* doc) {
   WiFi.setSleep(false);
 
   HTTPClient http;
-  http.setFollowRedirects(HTTPC_FORCE_FOLLOW_REDIRECTS);
+  http.setFollowRedirects(HTTPC_STRICT_FOLLOW_REDIRECTS);
+  http.setRedirectLimit(5);
   http.getStream().setTimeout(60);
   http.getStream().flush();
   http.begin(url);
   
   int httpCode = http.GET();
   if (httpCode == 200) {
-    // Uncomment to log response
+    // Add StreamUtils library and uncomment to log response
     // ReadLoggingStream loggingStream(http.getStream(), Serial);
+    // DeserializationError jsonError = deserializeJson(*doc, loggingStream);
     DeserializationError jsonError = deserializeJson(*doc, http.getStream());
     if (jsonError) {
       Serial.print(F("JSON deserialize failed: "));

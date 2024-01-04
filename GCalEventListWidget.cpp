@@ -75,11 +75,11 @@ void GCalEventListWidget::draw(bool partial) {
       ++day;
       if(day == 3) {
         margin = 20;
-        addition += 20;
+        addition += 35;
       }
     }
     
-    display->setCursor(getUpperX() + 11, getUpperY() + (i * margin) + addition);
+    display->setCursor(getUpperX() + 10, getUpperY() + (i * margin) + addition);
     if(margin == 30) {
       display->setFont(&FreeSans12pt7b);  
     } else {
@@ -87,7 +87,7 @@ void GCalEventListWidget::draw(bool partial) {
     }
     
     if(events[i].fullDay) {
-      display->print(F(" *** "));
+      display->print(F("*****"));
     } else {
       display->print(events[i].startTime);
       display->print(F("-"));
@@ -106,9 +106,15 @@ void GCalEventListWidget::draw(bool partial) {
 }
 
 int GCalEventListWidget::parseEvents(DynamicJsonDocument* doc) {
-  struct tm today = {0}, tomorrow = {0};
+  struct tm today = {0}, tomorrow = {0}, endOfToday = {0};
   network->getCurrentTimeInfo(&today, 0);
   network->getCurrentTimeInfo(&tomorrow, 86400L);
+  memcpy(&endOfToday, &tomorrow, sizeof(tm));
+  endOfToday.tm_hour = 0;
+  endOfToday.tm_min = 0;
+  endOfToday.tm_sec = 0;
+
+  time_t epochToday = mktime(&endOfToday);
   
   JsonArray arr = doc->as<JsonArray>();
   int i = 0;
@@ -128,7 +134,9 @@ int GCalEventListWidget::parseEvents(DynamicJsonDocument* doc) {
     eventStart.tm_hour += TIMEZONE;
     eventEnd.tm_hour += TIMEZONE;
 
-    if(eventStart.tm_mday == today.tm_mday && eventStart.tm_mon == today.tm_mon && eventStart.tm_year == today.tm_year) {
+    time_t epochStart = mktime(&eventStart);
+
+    if(epochStart < epochToday) {
       strcpy(events[i].date, TODAY);
     } else if(eventStart.tm_mday == tomorrow.tm_mday && eventStart.tm_mon == tomorrow.tm_mon && eventStart.tm_year == tomorrow.tm_year) {
       strcpy(events[i].date, TOMORROW);
